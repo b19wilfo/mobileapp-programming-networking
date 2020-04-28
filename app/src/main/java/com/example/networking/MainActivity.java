@@ -8,6 +8,12 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,17 +22,37 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+    private String[] mountainNames = {"Matterhorn","K2","Mount Everest"};
+    private String[] mountainLocations = {"Alps","The Karakoram range","The Mahalangur Himal sub-range of the Himalayas"};
+    private int[] mountainHeights = {4478,8611,8884};
+
+}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TextView textView = findViewById(R.id.textView);
+        private ArrayList<String> listData=new ArrayList<>(Arrays.asList(mountainNames));
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, R.layout.list_item,listData);
+        ListView list_item=(ListView) findViewById(R.id.list_item);
+        list_item.setAdapter(adapter);
+        list_item.setOnClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(),"Enter your text here", Toast.LENGTH_SHORT.show());
+            }
+        });
     }
+}
 
 
-    MyAsyncTask extends AsyncTask
+
+    JsonTask extends AsyncTask
 
     {public void doInBackground(){
         @SuppressLint("StaticFieldLeak")
@@ -34,21 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
             private HttpURLConnection connection = null;
             private BufferedReader reader = null;
-
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = new ProgressDialog(MainActivity.this);
-                progressDialog.setMessage("Downloading JSON");
-                progressDialog.setCancelable(true);
-                progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        cancel(true);
-                    }
-                });
-                progressDialog.show();
-            }
 
             protected String doInBackground(String... params) {
                 try {
