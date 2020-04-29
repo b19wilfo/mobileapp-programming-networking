@@ -18,7 +18,7 @@
 
     <ListView
 
-        android:id="@+id/list_item"
+        android:id="@+id/list_view"
         android:layout_width="238dp"
         android:layout_height="320dp"
         app:layout_constraintBottom_toBottomOf="parent"

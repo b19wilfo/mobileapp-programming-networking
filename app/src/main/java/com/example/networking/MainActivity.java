@@ -30,84 +30,69 @@ public class MainActivity extends AppCompatActivity {
     private String[] mountainLocations = {"Alps","The Karakoram range","The Mahalangur Himal sub-range of the Himalayas"};
     private int[] mountainHeights = {4478,8611,8884};
 
-}
 
+    private ArrayList<String> listData=new ArrayList<>(Arrays.asList(mountainNames));
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView textView = findViewById(R.id.textView);
-        private ArrayList<String> listData=new ArrayList<>(Arrays.asList(mountainNames));
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, R.layout.list_item,listData);
-        ListView list_item=(ListView) findViewById(R.id.list_item);
-        list_item.setAdapter(adapter);
-        list_item.setOnClickListener(new AdapterView.OnItemClickListener(){
+        ListView listView=(ListView) findViewById(R.id.list_view);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),"Enter your text here", Toast.LENGTH_SHORT.show());
+                Toast.makeText(getApplicationContext(),"Enter your text here", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
-}
+    @SuppressLint("StaticFieldLeak")
+    private class JsonTask extends AsyncTask<String, String, String> {
 
+        private HttpURLConnection connection = null;
+        private BufferedReader reader = null;
 
+        protected String doInBackground(String... params) {
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
 
-    JsonTask extends AsyncTask
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
 
-    {public void doInBackground(){
-        @SuppressLint("StaticFieldLeak")
-        private class JsonTask extends AsyncTask<String, String, String> {
-
-            private HttpURLConnection connection = null;
-            private BufferedReader reader = null;
-
-            protected String doInBackground(String... params) {
+                StringBuilder builder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null && !isCancelled()) {
+                    builder.append(line).append("\n");
+                }
+                return builder.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
                 try {
-                    URL url = new URL("https://wwwlab.iit.his.se/brom/kurser/mobilprog/jsonservice.php");
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.connect();
-
-                    InputStream stream = connection.getInputStream();
-                    reader = new BufferedReader(new InputStreamReader(stream));
-
-                    StringBuilder builder = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null && !isCancelled()) {
-                        builder.append(line).append("\n");
+                    if (reader != null) {
+                        reader.close();
                     }
-                    return builder.toString();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } finally {
-                    if (connection != null) {
-                        connection.disconnect();
-                    }
-                    try {
-                        if (reader != null) {
-                            reader.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
-                return null;
             }
-
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(s);
-                Log.d("brom","DataFetched:"+s);
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-                textView.setText(result);
-            }
+            return null;
         }
-        // }
-        //public void onPostExecute(String s)
     }
-        // {
-        // your code, parse the returned JSON in s}}
 }
+
+
+
+
+
+
+
+
