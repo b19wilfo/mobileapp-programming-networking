@@ -32,18 +32,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     private ArrayList<String> listData=new ArrayList<>(Arrays.asList(mountainNames));
+    //private ArrayList<Mountain> mountainArrayList=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView textView = findViewById(R.id.textView);
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, R.layout.list_item,listData);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, R.layout.list_item,R.id.list_item,mountainNames);
         ListView listView=(ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),"Enter your text here", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),listData.get(position), Toast.LENGTH_SHORT).show();
             }
         });
 
