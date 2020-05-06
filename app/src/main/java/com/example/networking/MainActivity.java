@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.textView);
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, R.layout.list_item,listData);
         ListView listView=(ListView) findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
