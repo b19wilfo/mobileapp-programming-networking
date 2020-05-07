@@ -15,6 +15,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,41 +30,43 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
-    private String[] mountainNames = {"Matterhorn","K2","Mount Everest"};
-    private String[] mountainLocations = {"Alps","The Karakoram range","The Mahalangur Himal sub-range of the Himalayas"};
-    private int[] mountainHeights = {4478,8611,8884};
+    private String[] mountainNames = {"Matterhorn", "K2", "Mount Everest"};
+    private String[] mountainLocations = {"Alps", "The Karakoram range", "The Mahalangur Himal sub-range of the Himalayas"};
+    private int[] mountainHeights = {4478, 8611, 8884};
 
 
-    private ArrayList<String> listData=new ArrayList<>(Arrays.asList(mountainNames));
+    private ArrayList<String> listData = new ArrayList<>(Arrays.asList(mountainNames));
+
     //private ArrayList<Mountain> mountainArrayList=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?login=brom");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView textView = findViewById(R.id.textView);
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, R.layout.list_item,R.id.list_item,mountainNames);
-        ListView listView=(ListView) findViewById(R.id.list_view);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.list_item, mountainNames);
+        ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),listData.get(position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), listData.get(position), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
+
     @SuppressLint("StaticFieldLeak")
     private class JsonTask extends AsyncTask<String, String, String> {
 
         private HttpURLConnection connection = null;
         private BufferedReader reader = null;
-
         protected String doInBackground(String... params) {
             try {
-                URL url = new URL(params[0]);
+                URL url = new URL("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?login=brom");
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
-
                 InputStream stream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(stream));
 
@@ -70,6 +76,18 @@ public class MainActivity extends AppCompatActivity {
                     builder.append(line).append("\n");
                 }
                 return builder.toString();
+                try {
+                    JSONArray json1 = new JSONArray(json1);
+                    JSONArray a = json1.getJSONArray("name");
+
+                    int height = json1.getInt("height");
+                    for (int i=0; i<json1.length(); i++){
+                        JSONObject berg = new JSONObject(s);
+                        json1.getJSONObject(i);
+                    }
+                } catch (JSONException e) {
+                    Log.e("brom","E:"+e.getMessage());
+                }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -87,6 +105,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String json) {
+            Log.d("TAG", json);
         }
     }
 }
