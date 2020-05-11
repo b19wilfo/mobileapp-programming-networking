@@ -1,11 +1,13 @@
 package com.example.networking;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         private HttpURLConnection connection = null;
         private BufferedReader reader = null;
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         protected String doInBackground(String... params) {
             try {
                 URL url = new URL("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?login=brom");
@@ -75,15 +78,12 @@ public class MainActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null && !isCancelled()) {
                     builder.append(line).append("\n");
                 }
-                return builder.toString();
+                //return builder.toString();
                 try {
-                    JSONArray json1 = new JSONArray(json1);
-                    JSONArray a = json1.getJSONArray("name");
-
-                    int height = json1.getInt("height");
+                    JSONArray json1 = new JSONArray(builder.toString());
                     for (int i=0; i<json1.length(); i++){
-                        JSONObject berg = new JSONObject(s);
-                        json1.getJSONObject(i);
+                        JSONObject berg = json1.getJSONObject(i);
+                        Log.d("berg",berg.toString());
                     }
                 } catch (JSONException e) {
                     Log.e("brom","E:"+e.getMessage());
@@ -113,11 +113,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
-
-
-
-
-
-
-
