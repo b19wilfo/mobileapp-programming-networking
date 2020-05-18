@@ -34,12 +34,16 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
     private String[] mountainNames = {"Matterhorn", "K2", "Mount Everest"};
     private String[] mountainLocations = {"Alps", "The Karakoram range", "The Mahalangur Himal sub-range of the Himalayas"};
-    private int[] mountainHeights = {4478, 8611, 8884};
+    private Integer[] mountainHeights = {4478, 8611, 8884};
 
+    private ArrayList<Mountain> mountainArrayList;
 
-    private ArrayList<String> listData = new ArrayList<>(Arrays.asList(mountainNames));
-
+    public ArrayList<String> listDataNames = new ArrayList<>();
+    private ArrayList<Integer> listDataSize = new ArrayList<>();
+    private ArrayList<String> listDataLocation = new ArrayList<>();
     //private ArrayList<Mountain> mountainArrayList=new ArrayList<>();
+    public ArrayAdapter<Mountain> adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -47,15 +51,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView textView = findViewById(R.id.textView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.list_item, mountainNames);
+        adapter = new ArrayAdapter<>(this, R.layout.list_item, R.id.list_item, mountainArrayList);
         ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), listData.get(position), Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(getApplicationContext(), mountainArrayList.get(position).info(), Toast.LENGTH_SHORT).show();
             }
         });
+
 
     }
 
@@ -78,16 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null && !isCancelled()) {
                     builder.append(line).append("\n");
                 }
-                //return builder.toString();
-                try {
-                    JSONArray json1 = new JSONArray(builder.toString());
-                    for (int i=0; i<json1.length(); i++){
-                        JSONObject berg = json1.getJSONObject(i);
-                        Log.d("berg",berg.toString());
-                    }
-                } catch (JSONException e) {
-                    Log.e("brom","E:"+e.getMessage());
-                }
+                return builder.toString();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -110,6 +108,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String json) {
             Log.d("TAG", json);
+            JSONArray json1 = null;
+            try {
+                json1 = new JSONArray(json);
+                for (int i = 0; i < json1.length(); i++) {
+                    JSONObject berg = json1.getJSONObject(i);
+                    Log.d("berg", berg.toString());
+                    MainActivity.this.listDataNames.add(berg.getString("name"));
+                    MainActivity.this.listDataSize.add(berg.getInt("size"));
+                    MainActivity.this.listDataLocation.add(berg.getString("location"));
+                    Mountain mountain = new Mountain(berg.getString("name"),(berg.getString("location")),(berg.getInt("size")));
+                    mountainArrayList.add(mountain);
+                    adapter.notifyDataSetChanged();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }
