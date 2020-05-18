@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
     private String[] mountainLocations = {"Alps", "The Karakoram range", "The Mahalangur Himal sub-range of the Himalayas"};
     private Integer[] mountainHeights = {4478, 8611, 8884};
 
-    private ArrayList<Mountain> mountainArrayList;
+    //private ArrayList<Mountain> mountainArrayList;
 
     public ArrayList<String> listDataNames = new ArrayList<>();
     private ArrayList<Integer> listDataSize = new ArrayList<>();
     private ArrayList<String> listDataLocation = new ArrayList<>();
-    //private ArrayList<Mountain> mountainArrayList=new ArrayList<>();
+    private ArrayList<Mountain> mountainArrayList=new ArrayList<>();
     public ArrayAdapter<Mountain> adapter;
 
     @Override
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView textView = findViewById(R.id.textView);
-        adapter = new ArrayAdapter<>(this, R.layout.list_item, R.id.list_item, mountainArrayList);
+        adapter = new ArrayAdapter<Mountain>(this, R.layout.list_item, R.id.list_item, mountainArrayList);
         ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
 
